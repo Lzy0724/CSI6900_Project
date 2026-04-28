@@ -1,5 +1,4 @@
-# LLM4Rewrite (Customized Project README)
-
+# LLM4Rewrite
 This repository is your working project version of an LLM-driven SQL rewrite system based on the R-Bot idea, with additional local experimentation for:
 
 - prompt/rule ablation,
