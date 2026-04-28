@@ -82,7 +82,7 @@ def _analyze(name: str, input_latency: float) -> dict:
     model = MyModel(model_args)
 
     # 5. 指定编码 utf-8
-    with open(log_filename, 'r', encoding='utf-8') as f:
+    with open(log_filename, 'r', encoding='utf-8', errors='replace') as f:
         lines = list(f.readlines())
         if not lines:
             return {'template': name, 'time': {'retrieval': 0, 'arrange': 0, 'rewrite': 0}, 'rewrites': []}
@@ -233,13 +233,18 @@ if DATASET == 'calcite':
             if rewrite_obj['best_index'] != -1:  # 只添加有效结果
                 template_rewrites.append(rewrite_obj)
 else:
-    # 指向 dsb 下的 queries 文件夹
+    # DSB: <dataset>/queries/queryXXX/; TPC-H in this repo: <dataset>/queryN/ (no "queries" folder)
     queries_path = os.path.join(project_root, args.database, 'queries')
+    if not os.path.exists(queries_path):
+        queries_path = os.path.join(project_root, args.database)
     if not os.path.exists(queries_path):
         print(f"错误: 查询目录不存在 {queries_path}")
         exit(1)
 
-    query_templates = os.listdir(queries_path)
+    query_templates = sorted(
+        d for d in os.listdir(queries_path)
+        if os.path.isdir(os.path.join(queries_path, d))
+    )
     for template in tqdm(query_templates):
         max_idx = 1 if args.large else 2
         for idx in range(max_idx):

@@ -1,0 +1,42 @@
+15:02:51,940 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+15:02:51,940 root INFO Improved 0 out of 38 queries
+15:02:51,940 root INFO Average: 0.052982456140350874
+15:02:51,940 root INFO Median: 0.04833333333333334
+15:02:51,940 root INFO 90th Percentile: 0.083
+15:02:51,940 root INFO 95th Percentile: 0.09700000000000002
+15:02:51,940 root INFO Average Input: 0.05229824561403509
+15:02:51,940 root INFO Median Input: 0.04700000000000001
+15:02:51,941 root INFO 90th Percentile Input: 0.083
+15:02:51,941 root INFO 95th Percentile Input: 0.09700000000000002
+15:02:51,941 root INFO Average LLM Time: 7421.0526315789475
+15:02:51,941 root INFO Average Rewrite Time: 70.86842105263158
+15:02:51,941 root INFO Average Total Time: 7491.921052631579
+15:02:51,941 root INFO Average Overall: 7491.974035087718
+15:02:51,941 root INFO Median Overall: 7014.028
+15:02:51,941 root INFO 90th Percentile Overall: 10035.102333333334
+15:02:51,941 root INFO 95th Percentile Overall: 15018.020666666667
+16:15:11,245 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+16:15:11,245 root INFO Improved 0 out of 38 queries
+16:15:11,245 root INFO Average: 0.052982456140350874
+16:15:11,245 root INFO Median: 0.04833333333333334
+16:15:11,245 root INFO 90th Percentile: 0.083
+16:15:11,245 root INFO 95th Percentile: 0.09700000000000002
+16:15:11,245 root INFO Average Input: 0.05229824561403509
+16:15:11,247 root INFO Median Input: 0.04700000000000001
+16:15:11,247 root INFO 90th Percentile Input: 0.083
+16:15:11,247 root INFO 95th Percentile Input: 0.09700000000000002
+16:15:11,247 root INFO Average LLM Time: 7421.0526315789475
+16:15:11,247 root INFO Average Rewrite Time: 70.86842105263158
+16:15:11,247 root INFO Average Total Time: 7491.921052631579
+16:15:11,247 root INFO Average Overall: 7491.974035087718
+16:15:11,247 root INFO Median Overall: 7014.028
+16:15:11,247 root INFO 90th Percentile Overall: 10035.102333333334
+16:15:11,247 root INFO 95th Percentile Overall: 15018.020666666667

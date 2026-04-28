@@ -1,0 +1,40 @@
+15:13:57,368 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+15:13:57,368 root INFO Improved 0 out of 38 queries
+15:13:57,368 root INFO Average: 0.05260526315789474
+15:13:57,368 root INFO Median: 0.04833333333333334
+15:13:57,368 root INFO 90th Percentile: 0.083
+15:13:57,368 root INFO 95th Percentile: 0.09700000000000002
+15:13:57,368 root INFO Average Input: 0.05229824561403509
+15:13:57,368 root INFO Median Input: 0.04700000000000001
+15:13:57,368 root INFO 90th Percentile Input: 0.083
+15:13:57,368 root INFO 95th Percentile Input: 0.09700000000000002
+15:13:57,369 root INFO Average Total Time: 3956.4210526315787
+15:13:57,369 root INFO Average Overall: 3956.4736578947372
+15:13:57,369 root INFO Median Overall: 2757.0236666666665
+15:13:57,369 root INFO 90th Percentile Overall: 7519.097
+15:13:57,369 root INFO 95th Percentile Overall: 11966.082666666667
+16:15:31,268 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+16:15:31,271 root INFO Improved 0 out of 38 queries
+16:15:31,271 root INFO Average: 0.05260526315789474
+16:15:31,271 root INFO Median: 0.04833333333333334
+16:15:31,271 root INFO 90th Percentile: 0.083
+16:15:31,271 root INFO 95th Percentile: 0.09700000000000002
+16:15:31,271 root INFO Average Input: 0.05229824561403509
+16:15:31,271 root INFO Median Input: 0.04700000000000001
+16:15:31,271 root INFO 90th Percentile Input: 0.083
+16:15:31,271 root INFO 95th Percentile Input: 0.09700000000000002
+16:15:31,271 root INFO Average Total Time: 3956.4210526315787
+16:15:31,271 root INFO Cache Hit Rate: 0.0
+16:15:31,271 root INFO Average Rewrite Time (Cold): 3956.4210526315787
+16:15:31,271 root INFO Average Overall: 3956.4736578947372
+16:15:31,271 root INFO Median Overall: 2757.0236666666665
+16:15:31,271 root INFO 90th Percentile Overall: 7519.097
+16:15:31,271 root INFO 95th Percentile Overall: 11966.082666666667

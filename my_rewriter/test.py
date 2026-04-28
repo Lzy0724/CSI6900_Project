@@ -16,6 +16,9 @@ parser.add_argument('--database', type=str, required=True)
 parser.add_argument('--logdir', type=str, default='logs')
 parser.add_argument('--index', type=str, default='hybrid')
 parser.add_argument('--topk', type=int, default=10)
+parser.add_argument('--evidence_topk', type=int, default=None, help='limit evidence items included in prompt')
+parser.add_argument('--rule_prune_mode', type=str, default='off', choices=['off', 'heuristic'])
+parser.add_argument('--max_rule_candidates', type=int, default=None, help='cap candidate rule count in prompt')
 args = parser.parse_args()
 
 model_args = init_llms(args.logdir)
@@ -65,7 +68,9 @@ if DATASET == 'calcite':
             query = obj['input_sql']
             name = sorted([x['name'] for x in obj['rewrites']])[0]
             test(name, query, schema, pg_args, model_args, docstore, LOG_DIR, RETRIEVER_TOP_K=RETRIEVER_TOP_K,
-                 CASE_BATCH=CASE_BATCH, RULE_BATCH=RULE_BATCH, REWRITE_ROUNDS=REWRITE_ROUNDS, index=args.index)
+                 CASE_BATCH=CASE_BATCH, RULE_BATCH=RULE_BATCH, REWRITE_ROUNDS=REWRITE_ROUNDS, index=args.index,
+                 EVIDENCE_TOP_K=args.evidence_topk, RULE_PRUNE_MODE=args.rule_prune_mode,
+                 MAX_RULE_CANDIDATES=args.max_rule_candidates)
 elif DATASET == 'hbom':
     queries_filename = os.path.join(project_root, DATASET, 'queries.sql')
     content = open(queries_filename, 'r', encoding='utf-8').read()
@@ -73,7 +78,9 @@ elif DATASET == 'hbom':
     for j, query in enumerate(queries):
         name = f'query{j}'
         test(name, query, schema, pg_args, model_args, docstore, LOG_DIR, RETRIEVER_TOP_K=RETRIEVER_TOP_K,
-             CASE_BATCH=CASE_BATCH, RULE_BATCH=RULE_BATCH, REWRITE_ROUNDS=REWRITE_ROUNDS, index=args.index)
+             CASE_BATCH=CASE_BATCH, RULE_BATCH=RULE_BATCH, REWRITE_ROUNDS=REWRITE_ROUNDS, index=args.index,
+             EVIDENCE_TOP_K=args.evidence_topk, RULE_PRUNE_MODE=args.rule_prune_mode,
+             MAX_RULE_CANDIDATES=args.max_rule_candidates)
 else:
     # 3. 更新查询路径到 queries 子目录
     queries_path = os.path.join(project_root, DATASET, 'queries')
@@ -101,4 +108,6 @@ else:
             for j, query in enumerate(queries):
                 name = f'{template}_{idx}' if len(queries) == 1 else f'{template}_{idx}_{j}'
                 test(name, query, schema, pg_args, model_args, docstore, LOG_DIR, RETRIEVER_TOP_K=RETRIEVER_TOP_K,
-                     CASE_BATCH=CASE_BATCH, RULE_BATCH=RULE_BATCH, REWRITE_ROUNDS=REWRITE_ROUNDS, index=args.index)
+                     CASE_BATCH=CASE_BATCH, RULE_BATCH=RULE_BATCH, REWRITE_ROUNDS=REWRITE_ROUNDS, index=args.index,
+                     EVIDENCE_TOP_K=args.evidence_topk, RULE_PRUNE_MODE=args.rule_prune_mode,
+                     MAX_RULE_CANDIDATES=args.max_rule_candidates)

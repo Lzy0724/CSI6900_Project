@@ -69,7 +69,7 @@ def analyze(query: str, name: str) -> dict:
     llm_start = None
     llm_end = None
     rewrite_res = []
-    with open(log_filename, 'r') as f:
+    with open(log_filename, 'r', encoding='utf-8', errors='replace') as f:
         lines = list(f.readlines())
         llm_start = lines[0].split(',')[0]
         llm_start = datetime.strptime(llm_start, '%H:%M:%S')

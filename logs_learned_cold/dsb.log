@@ -1,0 +1,42 @@
+16:22:09,328 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+16:22:09,329 root INFO Improved 0 out of 38 queries
+16:22:09,329 root INFO Average: 0.05260526315789474
+16:22:09,329 root INFO Median: 0.04833333333333334
+16:22:09,329 root INFO 90th Percentile: 0.083
+16:22:09,329 root INFO 95th Percentile: 0.09700000000000002
+16:22:09,329 root INFO Average Input: 0.05229824561403509
+16:22:09,329 root INFO Median Input: 0.04700000000000001
+16:22:09,329 root INFO 90th Percentile Input: 0.083
+16:22:09,329 root INFO 95th Percentile Input: 0.09700000000000002
+16:22:09,329 root INFO Average Total Time: 4707.973684210527
+16:22:09,329 root INFO Cache Hit Rate: 0.0
+16:22:09,329 root INFO Average Rewrite Time (Cold): 4707.973684210527
+16:22:09,330 root INFO Average Overall: 4708.026289473684
+16:22:09,330 root INFO Median Overall: 3564.04
+16:22:09,330 root INFO 90th Percentile Overall: 8698.064
+16:22:09,330 root INFO 95th Percentile Overall: 14961.059
+04:50:52,317 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+04:50:52,318 root INFO Improved 0 out of 38 queries
+04:50:52,318 root INFO Average: 0.06302631578947368
+04:50:52,318 root INFO Median: 0.04833333333333334
+04:50:52,318 root INFO 90th Percentile: 0.08733333333333333
+04:50:52,318 root INFO 95th Percentile: 0.10233333333333333
+04:50:52,318 root INFO Average Input: 0.05229824561403509
+04:50:52,318 root INFO Median Input: 0.04700000000000001
+04:50:52,318 root INFO 90th Percentile Input: 0.083
+04:50:52,318 root INFO 95th Percentile Input: 0.09700000000000002
+04:50:52,318 root INFO Average Total Time: 4012.7105263157896
+04:50:52,318 root INFO Cache Hit Rate: 0.0
+04:50:52,318 root INFO Average Rewrite Time (Cold): 4012.7105263157896
+04:50:52,318 root INFO Average Overall: 4012.7735526315787
+04:50:52,318 root INFO Median Overall: 2996.0466666666666
+04:50:52,318 root INFO 90th Percentile Overall: 8184.097
+04:50:52,318 root INFO 95th Percentile Overall: 12286.083

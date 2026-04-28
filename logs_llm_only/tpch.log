@@ -1,0 +1,778 @@
+22:45:57,203 root ERROR Failed to execute pgsql_actual_time select
+	sum(l_extendedprice) / 7.0 as avg_yearly
+from
+	lineitem,
+	part
+where
+	p_partkey = l_partkey
+	and p_brand = 'Brand#23'
+	and p_container = 'WRAP BAG'
+	and l_quantity < (
+		select
+			0.2 * avg(l_quantity)
+		from
+			lineitem
+		where
+			l_partkey = p_partkey
+	)
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+22:51:08,854 root ERROR Failed to execute pgsql_actual_time select
+	s_acctbal,
+	s_name,
+	n_name,
+	p_partkey,
+	p_mfgr,
+	s_address,
+	s_phone,
+	s_comment
+from
+	part,
+	supplier,
+	partsupp,
+	nation,
+	region
+where
+	p_partkey = ps_partkey
+	and s_suppkey = ps_suppkey
+	and p_size = 7
+	and p_type like '%COPPER'
+	and s_nationkey = n_nationkey
+	and n_regionkey = r_regionkey
+	and r_name = 'MIDDLE EAST'
+	and ps_supplycost = (
+		select
+			min(ps_supplycost)
+		from
+			partsupp,
+			supplier,
+			nation,
+			region
+		where
+			p_partkey = ps_partkey
+			and s_suppkey = ps_suppkey
+			and s_nationkey = n_nationkey
+			and n_regionkey = r_regionkey
+			and r_name = 'MIDDLE EAST'
+	)
+order by
+	s_acctbal desc,
+	n_name,
+	s_name,
+	p_partkey
+limit 100;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+22:56:08,993 root ERROR Failed to execute pgsql_actual_time select
+	s_name,
+	s_address
+from
+	supplier,
+	nation
+where
+	s_suppkey in (
+		select
+			ps_suppkey
+		from
+			partsupp
+		where
+			ps_partkey in (
+				select
+					p_partkey
+				from
+					part
+				where
+					p_name like 'snow%'
+			)
+			and ps_availqty > (
+				select
+					0.5 * sum(l_quantity)
+				from
+					lineitem
+				where
+					l_partkey = ps_partkey
+					and l_suppkey = ps_suppkey
+					and l_shipdate >= date '1994-01-01'
+					and l_shipdate < date '1994-01-01' + interval '1' year
+			)
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'EGYPT'
+order by
+	s_name
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:01:09,776 root ERROR Failed to execute pgsql_actual_time select
+	s_name,
+	count(*) as numwait
+from
+	supplier,
+	lineitem l1,
+	orders,
+	nation
+where
+	s_suppkey = l1.l_suppkey
+	and o_orderkey = l1.l_orderkey
+	and o_orderstatus = 'F'
+	and l1.l_receiptdate > l1.l_commitdate
+	and exists (
+		select
+			*
+		from
+			lineitem l2
+		where
+			l2.l_orderkey = l1.l_orderkey
+			and l2.l_suppkey <> l1.l_suppkey
+	)
+	and not exists (
+		select
+			*
+		from
+			lineitem l3
+		where
+			l3.l_orderkey = l1.l_orderkey
+			and l3.l_suppkey <> l1.l_suppkey
+			and l3.l_receiptdate > l3.l_commitdate
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'FRANCE'
+group by
+	s_name
+order by
+	numwait desc,
+	s_name
+limit 100;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:06:12,348 root ERROR Failed to execute pgsql_actual_time SELECT "supplier"."s_name", COUNT(*) AS "numwait"
+FROM "supplier"
+    INNER JOIN (SELECT *
+        FROM "lineitem"
+        WHERE "l_receiptdate" > "l_commitdate") AS "t" ON "supplier"."s_suppkey" = "t"."l_suppkey"
+    INNER JOIN (SELECT *
+        FROM "orders"
+        WHERE "o_orderstatus" = 'F') AS "t0" ON "t"."l_orderkey" = "t0"."o_orderkey"
+    INNER JOIN (SELECT *
+        FROM "nation"
+        WHERE "n_name" = 'FRANCE') AS "t1" ON "supplier"."s_nationkey" = "t1"."n_nationkey"
+    INNER JOIN (SELECT "t6"."l_orderkey1", "t6"."l_suppkey1", TRUE AS "$f2"
+        FROM "lineitem" AS "lineitem0" ("l_orderkey0", "l_partkey0", "l_suppkey0", "l_linenumber0", "l_quantity0", "l_extendedprice0", "l_discount0", "l_tax0", "l_returnflag0", "l_linestatus0", "l_shipdate0", "l_commitdate0", "l_receiptdate0", "l_shipinstruct0", "l_shipmode0", "l_comment0")
+            INNER JOIN (SELECT "t2"."l_orderkey1", "t2"."l_suppkey1"
+                FROM "supplier" AS "supplier0" ("s_suppkey0", "s_name0", "s_address0", "s_nationkey0", "s_phone0", "s_acctbal0", "s_comment0")
+                    INNER JOIN (SELECT *
+                        FROM "lineitem" AS "lineitem1" ("l_orderkey1", "l_partkey1", "l_suppkey1", "l_linenumber1", "l_quantity1", "l_extendedprice1", "l_discount1", "l_tax1", "l_returnflag1", "l_linestatus1", "l_shipdate1", "l_commitdate1", "l_receiptdate1", "l_shipinstruct1", "l_shipmode1", "l_comment1")
+                        WHERE "l_receiptdate1" > "l_commitdate1") AS "t2" ON "supplier0"."s_suppkey0" = "t2"."l_suppkey1"
+                    INNER JOIN (SELECT *
+                        FROM "orders" AS "orders0" ("o_orderkey0", "o_custkey0", "o_orderstatus0", "o_totalprice0", "o_orderdate0", "o_orderpriority0", "o_clerk0", "o_shippriority0", "o_comment0")
+                        WHERE "o_orderstatus0" = 'F') AS "t3" ON "t2"."l_orderkey1" = "t3"."o_orderkey0"
+                    INNER JOIN (SELECT *
+                        FROM "nation" AS "nation0" ("n_nationkey0", "n_name0", "n_regionkey0", "n_comment0")
+                        WHERE "n_name0" = 'FRANCE') AS "t4" ON "supplier0"."s_nationkey0" = "t4"."n_nationkey0"
+                GROUP BY "t2"."l_orderkey1", "t2"."l_suppkey1") AS "t6" ON "lineitem0"."l_orderkey0" = "t6"."l_orderkey1" AND "lineitem0"."l_suppkey0" <> "t6"."l_suppkey1"
+        GROUP BY "t6"."l_orderkey1", "t6"."l_suppkey1") AS "t9" ON "t"."l_orderkey" = "t9"."l_orderkey1" AND "t"."l_suppkey" = "t9"."l_suppkey1"
+    LEFT JOIN (SELECT "t15"."l_orderkey3", "t15"."l_suppkey3", TRUE AS "$f20"
+        FROM (SELECT *
+                FROM "lineitem" AS "lineitem2" ("l_orderkey2", "l_partkey2", "l_suppkey2", "l_linenumber2", "l_quantity2", "l_extendedprice2", "l_discount2", "l_tax2", "l_returnflag2", "l_linestatus2", "l_shipdate2", "l_commitdate2", "l_receiptdate2", "l_shipinstruct2", "l_shipmode2", "l_comment2")
+                WHERE "l_receiptdate2" > "l_commitdate2") AS "t10"
+            INNER JOIN (SELECT "t11"."l_orderkey3", "t11"."l_suppkey3"
+                FROM "supplier" AS "supplier1" ("s_suppkey1", "s_name1", "s_address1", "s_nationkey1", "s_phone1", "s_acctbal1", "s_comment1")
+                    INNER JOIN (SELECT *
+                        FROM "lineitem" AS "lineitem3" ("l_orderkey3", "l_partkey3", "l_suppkey3", "l_linenumber3", "l_quantity3", "l_extendedprice3", "l_discount3", "l_tax3", "l_returnflag3", "l_linestatus3", "l_shipdate3", "l_commitdate3", "l_receiptdate3", "l_shipinstruct3", "l_shipmode3", "l_comment3")
+                        WHERE "l_receiptdate3" > "l_commitdate3") AS "t11" ON "supplier1"."s_suppkey1" = "t11"."l_suppkey3"
+                    INNER JOIN (SELECT *
+                        FROM "orders" AS "orders1" ("o_orderkey1", "o_custkey1", "o_orderstatus1", "o_totalprice1", "o_orderdate1", "o_orderpriority1", "o_clerk1", "o_shippriority1", "o_comment1")
+                        WHERE "o_orderstatus1" = 'F') AS "t12" ON "t11"."l_orderkey3" = "t12"."o_orderkey1"
+                    INNER JOIN (SELECT *
+                        FROM "nation" AS "nation1" ("n_nationkey1", "n_name1", "n_regionkey1", "n_comment1")
+                        WHERE "n_name1" = 'FRANCE') AS "t13" ON "supplier1"."s_nationkey1" = "t13"."n_nationkey1"
+                GROUP BY "t11"."l_orderkey3", "t11"."l_suppkey3") AS "t15" ON "t10"."l_orderkey2" = "t15"."l_orderkey3" AND "t10"."l_suppkey2" <> "t15"."l_suppkey3"
+        GROUP BY "t15"."l_orderkey3", "t15"."l_suppkey3") AS "t18" ON "t"."l_orderkey" = "t18"."l_orderkey3" AND "t"."l_suppkey" = "t18"."l_suppkey3"
+WHERE "t18"."$f20" IS NULL
+GROUP BY "supplier"."s_name"
+ORDER BY 2 DESC, "supplier"."s_name"
+FETCH NEXT 100 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:11:12,493 root ERROR Failed to execute pgsql_actual_time select
+	cntrycode,
+	count(*) as numcust,
+	sum(c_acctbal) as totacctbal
+from
+	(
+		select
+			substring(c_phone from 1 for 2) as cntrycode,
+			c_acctbal
+		from
+			customer
+		where
+			substring(c_phone from 1 for 2) in
+				('14', '29', '27', '23', '32', '10', '12')
+			and c_acctbal > (
+				select
+					avg(c_acctbal)
+				from
+					customer
+				where
+					c_acctbal > 0.00
+					and substring(c_phone from 1 for 2) in
+						('14', '29', '27', '23', '32', '10', '12')
+			)
+			and not exists (
+				select
+					*
+				from
+					orders
+				where
+					o_custkey = c_custkey
+			)
+	) as custsale
+group by
+	cntrycode
+order by
+	cntrycode
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:16:12,625 root ERROR Failed to execute pgsql_actual_time SELECT SUBSTRING("c_phone", 1, 2) AS "cntrycode", COUNT(*) AS "numcust", SUM("c_acctbal") AS "totacctbal"
+FROM "customer"
+WHERE (SUBSTRING("c_phone", 1, 2) = '14' OR (SUBSTRING("c_phone", 1, 2) = '29' OR SUBSTRING("c_phone", 1, 2) = '27') OR (SUBSTRING("c_phone", 1, 2) = '23' OR SUBSTRING("c_phone", 1, 2) = '32' OR (SUBSTRING("c_phone", 1, 2) = '10' OR SUBSTRING("c_phone", 1, 2) = '12'))) AND "c_acctbal" > (((SELECT AVG("c_acctbal0")
+                    FROM "customer" AS "customer0" ("c_custkey0", "c_name0", "c_address0", "c_nationkey0", "c_phone0", "c_acctbal0", "c_mktsegment0", "c_comment0")
+                    WHERE "c_acctbal0" > 0.00 AND (SUBSTRING("c_phone0", 1, 2) = '14' OR (SUBSTRING("c_phone0", 1, 2) = '29' OR SUBSTRING("c_phone0", 1, 2) = '27') OR (SUBSTRING("c_phone0", 1, 2) = '23' OR SUBSTRING("c_phone0", 1, 2) = '32' OR (SUBSTRING("c_phone0", 1, 2) = '10' OR SUBSTRING("c_phone0", 1, 2) = '12')))))) AND NOT EXISTS (SELECT *
+        FROM "orders"
+        WHERE "o_custkey" = "customer"."c_custkey")
+GROUP BY SUBSTRING("c_phone", 1, 2)
+ORDER BY 1
+FETCH NEXT 1 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:21:13,216 root ERROR Failed to execute pgsql_actual_time select
+	o_year,
+	sum(case
+		when nation = 'CANADA' then volume
+		else 0
+	end) / sum(volume) as mkt_share
+from
+	(
+		select
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) as volume,
+			n2.n_name as nation
+		from
+			part,
+			supplier,
+			lineitem,
+			orders,
+			customer,
+			nation n1,
+			nation n2,
+			region
+		where
+			p_partkey = l_partkey
+			and s_suppkey = l_suppkey
+			and l_orderkey = o_orderkey
+			and o_custkey = c_custkey
+			and c_nationkey = n1.n_nationkey
+			and n1.n_regionkey = r_regionkey
+			and r_name = 'AMERICA'
+			and s_nationkey = n2.n_nationkey
+			and o_orderdate between date '1995-01-01' and date '1996-12-31'
+			and p_type = 'SMALL BURNISHED STEEL'
+	) as all_nations
+group by
+	o_year
+order by
+	o_year
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:26:13,354 root ERROR Failed to execute pgsql_actual_time SELECT "t12"."o_year", SUM("t12"."$f1") / SUM("t12"."volume") AS "mkt_share"
+FROM (SELECT "t10"."n_regionkey", "t10"."o_year", CASE WHEN "t11"."EXPR$0" THEN "t10"."volume" ELSE 0 END AS "$f1", "t10"."volume"
+        FROM (SELECT "t8"."s_nationkey", "t9"."n_regionkey", "t8"."o_year", "t8"."volume"
+                FROM (SELECT "t6"."s_nationkey", "t7"."c_nationkey", "t6"."o_year", "t6"."volume"
+                        FROM (SELECT "t3"."s_nationkey", "t5"."o_custkey", "t5"."o_year", "t3"."volume"
+                                FROM (SELECT "t1"."s_nationkey", "t2"."l_orderkey", "t2"."volume"
+                                        FROM (SELECT "p_partkey"
+                                                FROM "part"
+                                                WHERE "p_type" = 'SMALL BURNISHED STEEL') AS "t0"
+                                            CROSS JOIN (SELECT "s_suppkey", "s_nationkey"
+                                                FROM "supplier") AS "t1"
+                                            INNER JOIN (SELECT "l_orderkey", "l_partkey", "l_suppkey", "l_extendedprice" * (1 - "l_discount") AS "volume"
+                                                FROM "lineitem") AS "t2" ON "t0"."p_partkey" = "t2"."l_partkey" AND "t1"."s_suppkey" = "t2"."l_suppkey") AS "t3"
+                                    INNER JOIN (SELECT "o_orderkey", "o_custkey", EXTRACT(YEAR FROM "o_orderdate") AS "o_year"
+                                        FROM "orders"
+                                        WHERE "o_orderdate" >= DATE '1995-01-01' AND "o_orderdate" <= DATE '1996-12-31') AS "t5" ON "t3"."l_orderkey" = "t5"."o_orderkey") AS "t6"
+                            INNER JOIN (SELECT "c_custkey", "c_nationkey"
+                                FROM "customer") AS "t7" ON "t6"."o_custkey" = "t7"."c_custkey") AS "t8"
+                    INNER JOIN (SELECT "n_nationkey", "n_regionkey"
+                        FROM "nation") AS "t9" ON "t8"."c_nationkey" = "t9"."n_nationkey") AS "t10"
+            INNER JOIN (SELECT "n_nationkey0", "n_name0" = 'CANADA' AS "EXPR$0"
+                FROM "nation" AS "nation0" ("n_nationkey0", "n_name0", "n_regionkey0", "n_comment0")) AS "t11" ON "t10"."s_nationkey" = "t11"."n_nationkey0") AS "t12"
+    INNER JOIN (SELECT "r_regionkey"
+        FROM "region"
+        WHERE "r_name" = 'AMERICA') AS "t14" ON "t12"."n_regionkey" = "t14"."r_regionkey"
+GROUP BY "t12"."o_year"
+ORDER BY "t12"."o_year"
+FETCH NEXT 1 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:31:13,776 root ERROR Failed to execute pgsql_actual_time select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%cyan%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:36:14,46 root ERROR Failed to execute pgsql_actual_time SELECT "t8"."n_name" AS "nation", "t7"."o_year", SUM("t7"."amount") AS "sum_profit"
+FROM (SELECT "t5"."s_nationkey", "t6"."o_year", "t5"."amount"
+        FROM (SELECT "t3"."s_nationkey", "t3"."l_orderkey", "t3"."EXPR$0" - "t4"."ps_supplycost" * "t3"."l_quantity" AS "amount"
+                FROM (SELECT "t1"."s_nationkey", "t2"."l_orderkey", "t2"."l_partkey", "t2"."l_suppkey", "t2"."l_quantity", "t2"."EXPR$0"
+                        FROM (SELECT "p_partkey"
+                                FROM "part"
+                                WHERE "p_name" LIKE '%cyan%') AS "t0"
+                            CROSS JOIN (SELECT "s_suppkey", "s_nationkey"
+                                FROM "supplier") AS "t1"
+                            INNER JOIN (SELECT "l_orderkey", "l_partkey", "l_suppkey", "l_quantity", "l_extendedprice" * (1 - "l_discount") AS "EXPR$0"
+                                FROM "lineitem") AS "t2" ON "t1"."s_suppkey" = "t2"."l_suppkey" AND "t0"."p_partkey" = "t2"."l_partkey") AS "t3"
+                    INNER JOIN (SELECT "ps_partkey", "ps_suppkey", "ps_supplycost"
+                        FROM "partsupp") AS "t4" ON "t3"."l_suppkey" = "t4"."ps_suppkey" AND "t3"."l_partkey" = "t4"."ps_partkey") AS "t5"
+            INNER JOIN (SELECT "o_orderkey", EXTRACT(YEAR FROM "o_orderdate") AS "o_year"
+                FROM "orders") AS "t6" ON "t5"."l_orderkey" = "t6"."o_orderkey") AS "t7"
+    INNER JOIN (SELECT "n_nationkey", "n_name"
+        FROM "nation") AS "t8" ON "t7"."s_nationkey" = "t8"."n_nationkey"
+GROUP BY "t8"."n_name", "t7"."o_year"
+ORDER BY "t8"."n_name", "t7"."o_year" DESC
+FETCH NEXT 1 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+23:36:14,116 root INFO Improvements:
++-----------+-------+-----------+-------------------------------------------------------+
+|  Template | Input |   Output  |                         Rules                         |
++-----------+-------+-----------+-------------------------------------------------------+
+| query17_0 |  inf  | 37755.984 |           ['FILTER_SUB_QUERY_TO_CORRELATE']           |
+|  query2_0 |  inf  |  2677.186 |           ['FILTER_SUB_QUERY_TO_CORRELATE']           |
+| query20_0 |  inf  |  31831.79 | ['FILTER_INTO_JOIN', 'FILTER_SUB_QUERY_TO_CORRELATE'] |
++-----------+-------+-----------+-------------------------------------------------------+
+23:36:14,116 root INFO Improved 3 out of 22 queries
+23:36:14,116 root INFO Average: inf
+23:36:14,117 root INFO Median: 17329.54
+23:36:14,117 root INFO 90th Percentile: inf
+23:36:14,117 root INFO 95th Percentile: inf
+23:36:14,117 root INFO Average Input: inf
+23:36:14,117 root INFO Median Input: 20555.499
+23:36:14,117 root INFO 90th Percentile Input: inf
+23:36:14,117 root INFO 95th Percentile Input: inf
+23:36:14,117 root INFO Average LLM Time: 6409.090909090909
+23:36:14,117 root INFO Average Rewrite Time: 78.45454545454545
+23:36:14,117 root INFO Average Total Time: 6487.545454545454
+23:36:14,118 root INFO Average Overall: inf
+23:36:14,118 root INFO Median Overall: 23890.609
+23:36:14,118 root INFO 90th Percentile Overall: inf
+23:36:14,118 root INFO 95th Percentile Overall: inf
+18:07:47,777 root ERROR Failed to execute pgsql_actual_time select
+	sum(l_extendedprice) / 7.0 as avg_yearly
+from
+	lineitem,
+	part
+where
+	p_partkey = l_partkey
+	and p_brand = 'Brand#23'
+	and p_container = 'WRAP BAG'
+	and l_quantity < (
+		select
+			0.2 * avg(l_quantity)
+		from
+			lineitem
+		where
+			l_partkey = p_partkey
+	)
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:12:48,515 root ERROR Failed to execute pgsql_actual_time select
+	s_acctbal,
+	s_name,
+	n_name,
+	p_partkey,
+	p_mfgr,
+	s_address,
+	s_phone,
+	s_comment
+from
+	part,
+	supplier,
+	partsupp,
+	nation,
+	region
+where
+	p_partkey = ps_partkey
+	and s_suppkey = ps_suppkey
+	and p_size = 7
+	and p_type like '%COPPER'
+	and s_nationkey = n_nationkey
+	and n_regionkey = r_regionkey
+	and r_name = 'MIDDLE EAST'
+	and ps_supplycost = (
+		select
+			min(ps_supplycost)
+		from
+			partsupp,
+			supplier,
+			nation,
+			region
+		where
+			p_partkey = ps_partkey
+			and s_suppkey = ps_suppkey
+			and s_nationkey = n_nationkey
+			and n_regionkey = r_regionkey
+			and r_name = 'MIDDLE EAST'
+	)
+order by
+	s_acctbal desc,
+	n_name,
+	s_name,
+	p_partkey
+limit 100;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:17:48,655 root ERROR Failed to execute pgsql_actual_time select
+	s_name,
+	s_address
+from
+	supplier,
+	nation
+where
+	s_suppkey in (
+		select
+			ps_suppkey
+		from
+			partsupp
+		where
+			ps_partkey in (
+				select
+					p_partkey
+				from
+					part
+				where
+					p_name like 'snow%'
+			)
+			and ps_availqty > (
+				select
+					0.5 * sum(l_quantity)
+				from
+					lineitem
+				where
+					l_partkey = ps_partkey
+					and l_suppkey = ps_suppkey
+					and l_shipdate >= date '1994-01-01'
+					and l_shipdate < date '1994-01-01' + interval '1' year
+			)
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'EGYPT'
+order by
+	s_name
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:22:49,328 root ERROR Failed to execute pgsql_actual_time select
+	s_name,
+	count(*) as numwait
+from
+	supplier,
+	lineitem l1,
+	orders,
+	nation
+where
+	s_suppkey = l1.l_suppkey
+	and o_orderkey = l1.l_orderkey
+	and o_orderstatus = 'F'
+	and l1.l_receiptdate > l1.l_commitdate
+	and exists (
+		select
+			*
+		from
+			lineitem l2
+		where
+			l2.l_orderkey = l1.l_orderkey
+			and l2.l_suppkey <> l1.l_suppkey
+	)
+	and not exists (
+		select
+			*
+		from
+			lineitem l3
+		where
+			l3.l_orderkey = l1.l_orderkey
+			and l3.l_suppkey <> l1.l_suppkey
+			and l3.l_receiptdate > l3.l_commitdate
+	)
+	and s_nationkey = n_nationkey
+	and n_name = 'FRANCE'
+group by
+	s_name
+order by
+	numwait desc,
+	s_name
+limit 100;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:27:51,168 root ERROR Failed to execute pgsql_actual_time SELECT "supplier"."s_name", COUNT(*) AS "numwait"
+FROM "supplier"
+    INNER JOIN (SELECT *
+        FROM "lineitem"
+        WHERE "l_receiptdate" > "l_commitdate") AS "t" ON "supplier"."s_suppkey" = "t"."l_suppkey"
+    INNER JOIN (SELECT *
+        FROM "orders"
+        WHERE "o_orderstatus" = 'F') AS "t0" ON "t"."l_orderkey" = "t0"."o_orderkey"
+    INNER JOIN (SELECT *
+        FROM "nation"
+        WHERE "n_name" = 'FRANCE') AS "t1" ON "supplier"."s_nationkey" = "t1"."n_nationkey"
+    INNER JOIN (SELECT "t6"."l_orderkey1", "t6"."l_suppkey1", TRUE AS "$f2"
+        FROM "lineitem" AS "lineitem0" ("l_orderkey0", "l_partkey0", "l_suppkey0", "l_linenumber0", "l_quantity0", "l_extendedprice0", "l_discount0", "l_tax0", "l_returnflag0", "l_linestatus0", "l_shipdate0", "l_commitdate0", "l_receiptdate0", "l_shipinstruct0", "l_shipmode0", "l_comment0")
+            INNER JOIN (SELECT "t2"."l_orderkey1", "t2"."l_suppkey1"
+                FROM "supplier" AS "supplier0" ("s_suppkey0", "s_name0", "s_address0", "s_nationkey0", "s_phone0", "s_acctbal0", "s_comment0")
+                    INNER JOIN (SELECT *
+                        FROM "lineitem" AS "lineitem1" ("l_orderkey1", "l_partkey1", "l_suppkey1", "l_linenumber1", "l_quantity1", "l_extendedprice1", "l_discount1", "l_tax1", "l_returnflag1", "l_linestatus1", "l_shipdate1", "l_commitdate1", "l_receiptdate1", "l_shipinstruct1", "l_shipmode1", "l_comment1")
+                        WHERE "l_receiptdate1" > "l_commitdate1") AS "t2" ON "supplier0"."s_suppkey0" = "t2"."l_suppkey1"
+                    INNER JOIN (SELECT *
+                        FROM "orders" AS "orders0" ("o_orderkey0", "o_custkey0", "o_orderstatus0", "o_totalprice0", "o_orderdate0", "o_orderpriority0", "o_clerk0", "o_shippriority0", "o_comment0")
+                        WHERE "o_orderstatus0" = 'F') AS "t3" ON "t2"."l_orderkey1" = "t3"."o_orderkey0"
+                    INNER JOIN (SELECT *
+                        FROM "nation" AS "nation0" ("n_nationkey0", "n_name0", "n_regionkey0", "n_comment0")
+                        WHERE "n_name0" = 'FRANCE') AS "t4" ON "supplier0"."s_nationkey0" = "t4"."n_nationkey0"
+                GROUP BY "t2"."l_orderkey1", "t2"."l_suppkey1") AS "t6" ON "lineitem0"."l_orderkey0" = "t6"."l_orderkey1" AND "lineitem0"."l_suppkey0" <> "t6"."l_suppkey1"
+        GROUP BY "t6"."l_orderkey1", "t6"."l_suppkey1") AS "t9" ON "t"."l_orderkey" = "t9"."l_orderkey1" AND "t"."l_suppkey" = "t9"."l_suppkey1"
+    LEFT JOIN (SELECT "t15"."l_orderkey3", "t15"."l_suppkey3", TRUE AS "$f20"
+        FROM (SELECT *
+                FROM "lineitem" AS "lineitem2" ("l_orderkey2", "l_partkey2", "l_suppkey2", "l_linenumber2", "l_quantity2", "l_extendedprice2", "l_discount2", "l_tax2", "l_returnflag2", "l_linestatus2", "l_shipdate2", "l_commitdate2", "l_receiptdate2", "l_shipinstruct2", "l_shipmode2", "l_comment2")
+                WHERE "l_receiptdate2" > "l_commitdate2") AS "t10"
+            INNER JOIN (SELECT "t11"."l_orderkey3", "t11"."l_suppkey3"
+                FROM "supplier" AS "supplier1" ("s_suppkey1", "s_name1", "s_address1", "s_nationkey1", "s_phone1", "s_acctbal1", "s_comment1")
+                    INNER JOIN (SELECT *
+                        FROM "lineitem" AS "lineitem3" ("l_orderkey3", "l_partkey3", "l_suppkey3", "l_linenumber3", "l_quantity3", "l_extendedprice3", "l_discount3", "l_tax3", "l_returnflag3", "l_linestatus3", "l_shipdate3", "l_commitdate3", "l_receiptdate3", "l_shipinstruct3", "l_shipmode3", "l_comment3")
+                        WHERE "l_receiptdate3" > "l_commitdate3") AS "t11" ON "supplier1"."s_suppkey1" = "t11"."l_suppkey3"
+                    INNER JOIN (SELECT *
+                        FROM "orders" AS "orders1" ("o_orderkey1", "o_custkey1", "o_orderstatus1", "o_totalprice1", "o_orderdate1", "o_orderpriority1", "o_clerk1", "o_shippriority1", "o_comment1")
+                        WHERE "o_orderstatus1" = 'F') AS "t12" ON "t11"."l_orderkey3" = "t12"."o_orderkey1"
+                    INNER JOIN (SELECT *
+                        FROM "nation" AS "nation1" ("n_nationkey1", "n_name1", "n_regionkey1", "n_comment1")
+                        WHERE "n_name1" = 'FRANCE') AS "t13" ON "supplier1"."s_nationkey1" = "t13"."n_nationkey1"
+                GROUP BY "t11"."l_orderkey3", "t11"."l_suppkey3") AS "t15" ON "t10"."l_orderkey2" = "t15"."l_orderkey3" AND "t10"."l_suppkey2" <> "t15"."l_suppkey3"
+        GROUP BY "t15"."l_orderkey3", "t15"."l_suppkey3") AS "t18" ON "t"."l_orderkey" = "t18"."l_orderkey3" AND "t"."l_suppkey" = "t18"."l_suppkey3"
+WHERE "t18"."$f20" IS NULL
+GROUP BY "supplier"."s_name"
+ORDER BY 2 DESC, "supplier"."s_name"
+FETCH NEXT 100 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:32:51,306 root ERROR Failed to execute pgsql_actual_time select
+	cntrycode,
+	count(*) as numcust,
+	sum(c_acctbal) as totacctbal
+from
+	(
+		select
+			substring(c_phone from 1 for 2) as cntrycode,
+			c_acctbal
+		from
+			customer
+		where
+			substring(c_phone from 1 for 2) in
+				('14', '29', '27', '23', '32', '10', '12')
+			and c_acctbal > (
+				select
+					avg(c_acctbal)
+				from
+					customer
+				where
+					c_acctbal > 0.00
+					and substring(c_phone from 1 for 2) in
+						('14', '29', '27', '23', '32', '10', '12')
+			)
+			and not exists (
+				select
+					*
+				from
+					orders
+				where
+					o_custkey = c_custkey
+			)
+	) as custsale
+group by
+	cntrycode
+order by
+	cntrycode
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:37:51,450 root ERROR Failed to execute pgsql_actual_time SELECT SUBSTRING("c_phone", 1, 2) AS "cntrycode", COUNT(*) AS "numcust", SUM("c_acctbal") AS "totacctbal"
+FROM "customer"
+WHERE (SUBSTRING("c_phone", 1, 2) = '14' OR (SUBSTRING("c_phone", 1, 2) = '29' OR SUBSTRING("c_phone", 1, 2) = '27') OR (SUBSTRING("c_phone", 1, 2) = '23' OR SUBSTRING("c_phone", 1, 2) = '32' OR (SUBSTRING("c_phone", 1, 2) = '10' OR SUBSTRING("c_phone", 1, 2) = '12'))) AND "c_acctbal" > (((SELECT AVG("c_acctbal0")
+                    FROM "customer" AS "customer0" ("c_custkey0", "c_name0", "c_address0", "c_nationkey0", "c_phone0", "c_acctbal0", "c_mktsegment0", "c_comment0")
+                    WHERE "c_acctbal0" > 0.00 AND (SUBSTRING("c_phone0", 1, 2) = '14' OR (SUBSTRING("c_phone0", 1, 2) = '29' OR SUBSTRING("c_phone0", 1, 2) = '27') OR (SUBSTRING("c_phone0", 1, 2) = '23' OR SUBSTRING("c_phone0", 1, 2) = '32' OR (SUBSTRING("c_phone0", 1, 2) = '10' OR SUBSTRING("c_phone0", 1, 2) = '12')))))) AND NOT EXISTS (SELECT *
+        FROM "orders"
+        WHERE "o_custkey" = "customer"."c_custkey")
+GROUP BY SUBSTRING("c_phone", 1, 2)
+ORDER BY 1
+FETCH NEXT 1 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:42:51,996 root ERROR Failed to execute pgsql_actual_time select
+	o_year,
+	sum(case
+		when nation = 'CANADA' then volume
+		else 0
+	end) / sum(volume) as mkt_share
+from
+	(
+		select
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) as volume,
+			n2.n_name as nation
+		from
+			part,
+			supplier,
+			lineitem,
+			orders,
+			customer,
+			nation n1,
+			nation n2,
+			region
+		where
+			p_partkey = l_partkey
+			and s_suppkey = l_suppkey
+			and l_orderkey = o_orderkey
+			and o_custkey = c_custkey
+			and c_nationkey = n1.n_nationkey
+			and n1.n_regionkey = r_regionkey
+			and r_name = 'AMERICA'
+			and s_nationkey = n2.n_nationkey
+			and o_orderdate between date '1995-01-01' and date '1996-12-31'
+			and p_type = 'SMALL BURNISHED STEEL'
+	) as all_nations
+group by
+	o_year
+order by
+	o_year
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:47:52,106 root ERROR Failed to execute pgsql_actual_time SELECT "t12"."o_year", SUM("t12"."$f1") / SUM("t12"."volume") AS "mkt_share"
+FROM (SELECT "t10"."n_regionkey", "t10"."o_year", CASE WHEN "t11"."EXPR$0" THEN "t10"."volume" ELSE 0 END AS "$f1", "t10"."volume"
+        FROM (SELECT "t8"."s_nationkey", "t9"."n_regionkey", "t8"."o_year", "t8"."volume"
+                FROM (SELECT "t6"."s_nationkey", "t7"."c_nationkey", "t6"."o_year", "t6"."volume"
+                        FROM (SELECT "t3"."s_nationkey", "t5"."o_custkey", "t5"."o_year", "t3"."volume"
+                                FROM (SELECT "t1"."s_nationkey", "t2"."l_orderkey", "t2"."volume"
+                                        FROM (SELECT "p_partkey"
+                                                FROM "part"
+                                                WHERE "p_type" = 'SMALL BURNISHED STEEL') AS "t0"
+                                            CROSS JOIN (SELECT "s_suppkey", "s_nationkey"
+                                                FROM "supplier") AS "t1"
+                                            INNER JOIN (SELECT "l_orderkey", "l_partkey", "l_suppkey", "l_extendedprice" * (1 - "l_discount") AS "volume"
+                                                FROM "lineitem") AS "t2" ON "t0"."p_partkey" = "t2"."l_partkey" AND "t1"."s_suppkey" = "t2"."l_suppkey") AS "t3"
+                                    INNER JOIN (SELECT "o_orderkey", "o_custkey", EXTRACT(YEAR FROM "o_orderdate") AS "o_year"
+                                        FROM "orders"
+                                        WHERE "o_orderdate" >= DATE '1995-01-01' AND "o_orderdate" <= DATE '1996-12-31') AS "t5" ON "t3"."l_orderkey" = "t5"."o_orderkey") AS "t6"
+                            INNER JOIN (SELECT "c_custkey", "c_nationkey"
+                                FROM "customer") AS "t7" ON "t6"."o_custkey" = "t7"."c_custkey") AS "t8"
+                    INNER JOIN (SELECT "n_nationkey", "n_regionkey"
+                        FROM "nation") AS "t9" ON "t8"."c_nationkey" = "t9"."n_nationkey") AS "t10"
+            INNER JOIN (SELECT "n_nationkey0", "n_name0" = 'CANADA' AS "EXPR$0"
+                FROM "nation" AS "nation0" ("n_nationkey0", "n_name0", "n_regionkey0", "n_comment0")) AS "t11" ON "t10"."s_nationkey" = "t11"."n_nationkey0") AS "t12"
+    INNER JOIN (SELECT "r_regionkey"
+        FROM "region"
+        WHERE "r_name" = 'AMERICA') AS "t14" ON "t12"."n_regionkey" = "t14"."r_regionkey"
+GROUP BY "t12"."o_year"
+ORDER BY "t12"."o_year"
+FETCH NEXT 1 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:52:52,513 root ERROR Failed to execute pgsql_actual_time select
+	nation,
+	o_year,
+	sum(amount) as sum_profit
+from
+	(
+		select
+			n_name as nation,
+			extract(year from o_orderdate) as o_year,
+			l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity as amount
+		from
+			part,
+			supplier,
+			lineitem,
+			partsupp,
+			orders,
+			nation
+		where
+			s_suppkey = l_suppkey
+			and ps_suppkey = l_suppkey
+			and ps_partkey = l_partkey
+			and p_partkey = l_partkey
+			and o_orderkey = l_orderkey
+			and s_nationkey = n_nationkey
+			and p_name like '%cyan%'
+	) as profit
+group by
+	nation,
+	o_year
+order by
+	nation,
+	o_year desc
+limit 1;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:57:52,783 root ERROR Failed to execute pgsql_actual_time SELECT "t8"."n_name" AS "nation", "t7"."o_year", SUM("t7"."amount") AS "sum_profit"
+FROM (SELECT "t5"."s_nationkey", "t6"."o_year", "t5"."amount"
+        FROM (SELECT "t3"."s_nationkey", "t3"."l_orderkey", "t3"."EXPR$0" - "t4"."ps_supplycost" * "t3"."l_quantity" AS "amount"
+                FROM (SELECT "t1"."s_nationkey", "t2"."l_orderkey", "t2"."l_partkey", "t2"."l_suppkey", "t2"."l_quantity", "t2"."EXPR$0"
+                        FROM (SELECT "p_partkey"
+                                FROM "part"
+                                WHERE "p_name" LIKE '%cyan%') AS "t0"
+                            CROSS JOIN (SELECT "s_suppkey", "s_nationkey"
+                                FROM "supplier") AS "t1"
+                            INNER JOIN (SELECT "l_orderkey", "l_partkey", "l_suppkey", "l_quantity", "l_extendedprice" * (1 - "l_discount") AS "EXPR$0"
+                                FROM "lineitem") AS "t2" ON "t1"."s_suppkey" = "t2"."l_suppkey" AND "t0"."p_partkey" = "t2"."l_partkey") AS "t3"
+                    INNER JOIN (SELECT "ps_partkey", "ps_suppkey", "ps_supplycost"
+                        FROM "partsupp") AS "t4" ON "t3"."l_suppkey" = "t4"."ps_suppkey" AND "t3"."l_partkey" = "t4"."ps_partkey") AS "t5"
+            INNER JOIN (SELECT "o_orderkey", EXTRACT(YEAR FROM "o_orderdate") AS "o_year"
+                FROM "orders") AS "t6" ON "t5"."l_orderkey" = "t6"."o_orderkey") AS "t7"
+    INNER JOIN (SELECT "n_nationkey", "n_name"
+        FROM "nation") AS "t8" ON "t7"."s_nationkey" = "t8"."n_nationkey"
+GROUP BY "t8"."n_name", "t7"."o_year"
+ORDER BY "t8"."n_name", "t7"."o_year" DESC
+FETCH NEXT 1 ROWS ONLY;
+[QueryCanceled('\u9519\u8bef:  \u7531\u4e8e\u8bed\u53e5\u6267\u884c\u8d85\u65f6\uff0c\u6b63\u5728\u53d6\u6d88\u67e5\u8be2\u547d\u4ee4\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n'), InFailedSqlTransaction('\u9519\u8bef:  \u5f53\u524d\u4e8b\u52a1\u88ab\u7ec8\u6b62, \u4e8b\u52a1\u5757\u7ed3\u675f\u4e4b\u524d\u7684\u67e5\u8be2\u88ab\u5ffd\u7565\n')]
+18:57:52,799 root INFO Improvements:
++-----------+-------+-----------+-------------------------------------------------------+
+|  Template | Input |   Output  |                         Rules                         |
++-----------+-------+-----------+-------------------------------------------------------+
+| query17_0 |  inf  | 37755.984 |           ['FILTER_SUB_QUERY_TO_CORRELATE']           |
+|  query2_0 |  inf  |  2677.186 |           ['FILTER_SUB_QUERY_TO_CORRELATE']           |
+| query20_0 |  inf  |  31831.79 | ['FILTER_INTO_JOIN', 'FILTER_SUB_QUERY_TO_CORRELATE'] |
++-----------+-------+-----------+-------------------------------------------------------+
+18:57:52,800 root INFO Improved 3 out of 22 queries
+18:57:52,800 root INFO Average: inf
+18:57:52,800 root INFO Median: 17329.54
+18:57:52,800 root INFO 90th Percentile: inf
+18:57:52,800 root INFO 95th Percentile: inf
+18:57:52,800 root INFO Average Input: inf
+18:57:52,800 root INFO Median Input: 20555.499
+18:57:52,800 root INFO 90th Percentile Input: inf
+18:57:52,800 root INFO 95th Percentile Input: inf
+18:57:52,800 root INFO Average LLM Time: 6409.090909090909
+18:57:52,800 root INFO Average Rewrite Time: 78.45454545454545
+18:57:52,800 root INFO Average Total Time: 6487.545454545454
+18:57:52,800 root INFO Average Overall: inf
+18:57:52,800 root INFO Median Overall: 23890.609
+18:57:52,800 root INFO 90th Percentile Overall: inf
+18:57:52,800 root INFO 95th Percentile Overall: inf

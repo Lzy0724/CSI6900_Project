@@ -172,6 +172,22 @@ logging.info(f'95th Percentile Input: {input_latency_95th}')
 average_rewrite = sum([t['rewrite_time'] for t in template_rewrites]) / len(template_rewrites)
 logging.info(f'Average Total Time: {average_rewrite}')
 
+cache_hit_flags = [bool(results[t['template']].get('cache_hit', False)) for t in template_rewrites if t['template'] in results]
+if cache_hit_flags:
+    cache_hit_rate = sum(1 for x in cache_hit_flags if x) / len(cache_hit_flags)
+    logging.info(f'Cache Hit Rate: {cache_hit_rate}')
+    hot_rewrite_times = [results[t['template']]['rewrite_time'] for t in template_rewrites if results[t['template']].get('cache_hit', False)]
+    cold_rewrite_times = [results[t['template']]['rewrite_time'] for t in template_rewrites if not results[t['template']].get('cache_hit', False)]
+    if hot_rewrite_times:
+        logging.info(f'Average Rewrite Time (Hot): {sum(hot_rewrite_times) / len(hot_rewrite_times)}')
+    if cold_rewrite_times:
+        logging.info(f'Average Rewrite Time (Cold): {sum(cold_rewrite_times) / len(cold_rewrite_times)}')
+    if hot_rewrite_times and cold_rewrite_times:
+        hot_avg = sum(hot_rewrite_times) / len(hot_rewrite_times)
+        cold_avg = sum(cold_rewrite_times) / len(cold_rewrite_times)
+        if cold_avg > 0:
+            logging.info(f'Rewrite Time Improvement (Hot vs Cold): {(cold_avg - hot_avg) / cold_avg}')
+
 if args.large:
     overall_latencies = [t['rewrite_time'] + o for t, o in zip(template_rewrites, output_latencies)]
 

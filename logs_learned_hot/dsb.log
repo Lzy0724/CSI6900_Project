@@ -1,0 +1,46 @@
+16:28:05,80 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+16:28:05,80 root INFO Improved 0 out of 38 queries
+16:28:05,80 root INFO Average: 0.06602631578947368
+16:28:05,80 root INFO Median: 0.04833333333333334
+16:28:05,80 root INFO 90th Percentile: 0.08733333333333333
+16:28:05,80 root INFO 95th Percentile: 0.10233333333333333
+16:28:05,80 root INFO Average Input: 0.05229824561403509
+16:28:05,80 root INFO Median Input: 0.04700000000000001
+16:28:05,80 root INFO 90th Percentile Input: 0.083
+16:28:05,82 root INFO 95th Percentile Input: 0.09700000000000002
+16:28:05,82 root INFO Average Total Time: 1183.5263157894738
+16:28:05,82 root INFO Cache Hit Rate: 0.8421052631578947
+16:28:05,82 root INFO Average Rewrite Time (Hot): 313.53125
+16:28:05,82 root INFO Average Rewrite Time (Cold): 5823.5
+16:28:05,82 root INFO Rewrite Time Improvement (Hot vs Cold): 0.9461610285910534
+16:28:05,82 root INFO Average Overall: 1183.592342105263
+16:28:05,82 root INFO Median Overall: 257.078
+16:28:05,82 root INFO 90th Percentile Overall: 4125.052
+16:28:05,82 root INFO 95th Percentile Overall: 6935.049666666667
+04:53:43,831 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+04:53:43,832 root INFO Improved 0 out of 38 queries
+04:53:43,832 root INFO Average: 0.06602631578947368
+04:53:43,832 root INFO Median: 0.04833333333333334
+04:53:43,832 root INFO 90th Percentile: 0.08733333333333333
+04:53:43,832 root INFO 95th Percentile: 0.10233333333333333
+04:53:43,832 root INFO Average Input: 0.05229824561403509
+04:53:43,832 root INFO Median Input: 0.04700000000000001
+04:53:43,832 root INFO 90th Percentile Input: 0.083
+04:53:43,832 root INFO 95th Percentile Input: 0.09700000000000002
+04:53:43,832 root INFO Average Total Time: 1064.6315789473683
+04:53:43,832 root INFO Cache Hit Rate: 0.868421052631579
+04:53:43,832 root INFO Average Rewrite Time (Hot): 294.6060606060606
+04:53:43,832 root INFO Average Rewrite Time (Cold): 6146.8
+04:53:43,832 root INFO Rewrite Time Improvement (Hot vs Cold): 0.9520716371760817
+04:53:43,832 root INFO Average Overall: 1064.6976052631578
+04:53:43,832 root INFO Median Overall: 244.059
+04:53:43,832 root INFO 90th Percentile Overall: 3222.052
+04:53:43,832 root INFO 95th Percentile Overall: 6556.049666666667

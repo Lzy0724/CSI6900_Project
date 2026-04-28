@@ -1,0 +1,21 @@
+13:47:58,418 root INFO Improvements:
++----------+-------+--------+-------+
+| Template | Input | Output | Rules |
++----------+-------+--------+-------+
++----------+-------+--------+-------+
+13:47:58,418 root INFO Improved 0 out of 38 queries
+13:47:58,418 root INFO Average: 0.06452631578947368
+13:47:58,418 root INFO Median: 0.04966666666666667
+13:47:58,419 root INFO 90th Percentile: 0.08733333333333333
+13:47:58,419 root INFO 95th Percentile: 0.10233333333333333
+13:47:58,419 root INFO Average Input: 0.05229824561403509
+13:47:58,419 root INFO Median Input: 0.04700000000000001
+13:47:58,419 root INFO 90th Percentile Input: 0.083
+13:47:58,419 root INFO 95th Percentile Input: 0.09700000000000002
+13:47:58,419 root INFO Average Total Time: 419.7368421052632
+13:47:58,419 root INFO Cache Hit Rate: 1.0
+13:47:58,419 root INFO Average Rewrite Time (Hot): 419.7368421052632
+13:47:58,420 root INFO Average Overall: 419.8013684210526
+13:47:58,420 root INFO Median Overall: 274.04466666666667
+13:47:58,420 root INFO 90th Percentile Overall: 890.497
+13:47:58,420 root INFO 95th Percentile Overall: 1641.0826666666667
