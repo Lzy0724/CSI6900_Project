@@ -1,0 +1,13 @@
+{
+  "note": "Fill paper-reported numbers (LLM-R² / R-Bot paper) for side-by-side figures. Ours are computed from local logs when you run plot_d3_figures.py.",
+  "tpch": {
+    "r_bot_improved_pct": null,
+    "r_bot_avg_total_time_ms": null,
+    "source": "e.g. Table X in the paper; leave null to skip that bar"
+  },
+  "dsb": {
+    "r_bot_improved_pct": null,
+    "r_bot_avg_total_time_ms": null,
+    "source": null
+  }
+}

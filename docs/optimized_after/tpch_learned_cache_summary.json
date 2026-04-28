@@ -1,0 +1,32 @@
+{
+  "learned_cache_off": {
+    "source_log": "my_rewriter\\logs_learned_cold\\tpch.log",
+    "improved": 5,
+    "total": 22,
+    "improved_pct": 22.727272727272727,
+    "avg_total_time_ms": 1117.590909090909,
+    "avg_overall_ms": null,
+    "median_overall_ms": 17731.54,
+    "cache_hit_rate": 0.0,
+    "avg_rewrite_time_hot_ms": null,
+    "avg_rewrite_time_cold_ms": 1117.590909090909,
+    "rewrite_time_improvement_ratio": null
+  },
+  "learned_cache_on_hot": {
+    "source_log": "my_rewriter\\logs_learned_hot\\tpch.log",
+    "improved": 4,
+    "total": 22,
+    "improved_pct": 18.181818181818183,
+    "avg_total_time_ms": 300.1818181818182,
+    "avg_overall_ms": null,
+    "median_overall_ms": 20486.685,
+    "cache_hit_rate": 0.9090909090909091,
+    "avg_rewrite_time_hot_ms": 176.15,
+    "avg_rewrite_time_cold_ms": 1540.5,
+    "rewrite_time_improvement_ratio": 0.8856540084388185
+  },
+  "delta": {
+    "e2e_avg_overall_ms_reduction": null,
+    "e2e_note": "1 - (hot avg_overall / cold avg_overall); same TPC-H queries as in logs"
+  }
+}

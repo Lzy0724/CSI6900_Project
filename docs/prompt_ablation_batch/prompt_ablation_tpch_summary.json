@@ -1,0 +1,42 @@
+{
+  "base\n(Top-5)": {
+    "improved": 11,
+    "total": 22,
+    "improved_pct": 50.0,
+    "avg_total_time_ms": 30581.77089439739,
+    "median_overall_ms": 45741.610440551754,
+    "avg_overall_ms": null,
+    "logdir": "logs_tpch_base",
+    "config_note": "Top-5, no prune"
+  },
+  "Top-1": {
+    "improved": 10,
+    "total": 22,
+    "improved_pct": 45.45454545454545,
+    "avg_total_time_ms": 27234.64037947221,
+    "median_overall_ms": 51035.35119239807,
+    "avg_overall_ms": null,
+    "logdir": "logs_tpch_top1",
+    "config_note": "Top-1, no prune"
+  },
+  "prune+Top-5": {
+    "improved": 12,
+    "total": 22,
+    "improved_pct": 54.54545454545455,
+    "avg_total_time_ms": 26531.772858793087,
+    "median_overall_ms": 41676.7254485321,
+    "avg_overall_ms": null,
+    "logdir": "logs_tpch_prune_top5",
+    "config_note": "prune+Top-5"
+  },
+  "prune+Top-1": {
+    "improved": 11,
+    "total": 22,
+    "improved_pct": 50.0,
+    "avg_total_time_ms": 26097.947281230583,
+    "median_overall_ms": 41071.10618392944,
+    "avg_overall_ms": null,
+    "logdir": "logs_tpch_prune_top1",
+    "config_note": "prune+Top-1"
+  }
+}

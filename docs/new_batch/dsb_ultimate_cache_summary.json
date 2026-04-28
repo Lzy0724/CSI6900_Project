@@ -1,0 +1,33 @@
+{
+  "dataset": "dsb",
+  "ultimate_cold": {
+    "total": 76,
+    "improved": 4,
+    "regressed": 52,
+    "equal": 20,
+    "improved_pct": 0.05263157894736842,
+    "cache_hit_count": 39,
+    "cache_hit_rate": 0.5131578947368421,
+    "llm_invoked_count": 37,
+    "failed_count": 0,
+    "avg_rewrite_time_ms": 32454.86842105263,
+    "median_rewrite_time_ms": 597
+  },
+  "ultimate_hot": {
+    "total": 76,
+    "improved": 4,
+    "regressed": 52,
+    "equal": 20,
+    "improved_pct": 0.05263157894736842,
+    "cache_hit_count": 76,
+    "cache_hit_rate": 1.0,
+    "llm_invoked_count": 0,
+    "failed_count": 0,
+    "avg_rewrite_time_ms": 378.5394736842105,
+    "median_rewrite_time_ms": 274
+  },
+  "delta": {
+    "avg_rewrite_time_reduction": 0.9883364348062289,
+    "note": "1 - (hot avg_rewrite_time / cold avg_rewrite_time)"
+  }
+}

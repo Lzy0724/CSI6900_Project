@@ -1,0 +1,16 @@
+{
+  "figures": [
+    "d3_*_rewrite_time_hist.png",
+    "d3_*_sorted_rewrite_time_curve.png",
+    "d3_failure_rate_by_dataset.png",
+    "d3_*_cost_gain_vs_log_rewrite_scatter.png",
+    "d3_pooled_cost_vs_log_rewrite.png",
+    "d3_ours_vs_paper_improved_pct.png",
+    "d3_ours_vs_paper_avg_total_time.png",
+    "d3_timeout_inf_count_analyze_log.png"
+  ],
+  "notes": {
+    "timeout": "No explicit server-side timeout in res.jsonl; 'failure' uses output_sql==None or output_cost<0. True SQL 300s timeouts are in analyze flow only.",
+    "correlation": "Cost gain vs log(rewrite_time) is a proxy, not physical speedup; for SQL speedup, use analyze --compute_latency and join per query."
+  }
+}

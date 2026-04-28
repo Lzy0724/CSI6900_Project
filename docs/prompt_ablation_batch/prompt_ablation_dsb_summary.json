@@ -1,0 +1,42 @@
+{
+  "base\n(Top-5)": {
+    "improved": 9,
+    "total": 37,
+    "improved_pct": 24.324324324324323,
+    "avg_total_time_ms": 34079.67671724268,
+    "median_overall_ms": 32840.59537543742,
+    "avg_overall_ms": 34079.750023548986,
+    "logdir": "logs_dsb_base",
+    "config_note": "Top-5, no prune"
+  },
+  "Top-1": {
+    "improved": 10,
+    "total": 37,
+    "improved_pct": 27.027027027027028,
+    "avg_total_time_ms": 34104.61604350322,
+    "median_overall_ms": 31729.155537027993,
+    "avg_overall_ms": 34104.68823269241,
+    "logdir": "logs_dsb_top1",
+    "config_note": "Top-1, no prune"
+  },
+  "prune+Top-5": {
+    "improved": 9,
+    "total": 38,
+    "improved_pct": 23.68421052631579,
+    "avg_total_time_ms": 32964.08503416965,
+    "median_overall_ms": 32350.893716629027,
+    "avg_overall_ms": 32964.17463943281,
+    "logdir": "logs_dsb_prune_top5",
+    "config_note": "prune+Top-5"
+  },
+  "prune+Top-1": {
+    "improved": 6,
+    "total": 23,
+    "improved_pct": 26.08695652173913,
+    "avg_total_time_ms": 34253.5177607329,
+    "median_overall_ms": 33860.58700399272,
+    "avg_overall_ms": 34253.60736942855,
+    "logdir": "logs_dsb_prune_top1",
+    "config_note": "prune+Top-1"
+  }
+}

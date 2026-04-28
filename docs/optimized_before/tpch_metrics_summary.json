@@ -1,0 +1,32 @@
+{
+  "R-Bot": {
+    "improved": 9,
+    "total": 20,
+    "improved_pct": 45.0,
+    "median_output_latency_s": 17506.049,
+    "median_output_ms": 17506049.0,
+    "median_overall_ms": 52041.893143753055,
+    "avg_total_time_ms": 34190.63122329712,
+    "note": "If Median Overall exists (analyze --large), chart uses it; otherwise falls back to Median output latency."
+  },
+  "LLM-Only": {
+    "improved": 3,
+    "total": 22,
+    "improved_pct": 13.636363636363637,
+    "median_output_latency_s": 17329.54,
+    "median_output_ms": 17329540.0,
+    "median_overall_ms": 23890.609,
+    "avg_total_time_ms": 6487.545454545454,
+    "note": "If Median Overall exists (analyze --large), chart uses it; otherwise falls back to Median output latency."
+  },
+  "LearnedRewrite": {
+    "improved": 4,
+    "total": 22,
+    "improved_pct": 18.181818181818183,
+    "median_output_latency_s": 20555.499,
+    "median_output_ms": 20555499.0,
+    "median_overall_ms": 23808.428,
+    "avg_total_time_ms": 1482.8181818181818,
+    "note": "If Median Overall exists (analyze --large), chart uses it; otherwise falls back to Median output latency."
+  }
+}

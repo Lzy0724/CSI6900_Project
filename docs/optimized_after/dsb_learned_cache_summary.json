@@ -1,0 +1,32 @@
+{
+  "learned_cache_off": {
+    "source_log": "my_rewriter\\logs_learned_cold\\dsb.log",
+    "improved": 0,
+    "total": 38,
+    "improved_pct": 0.0,
+    "avg_total_time_ms": 4707.973684210527,
+    "avg_overall_ms": 4708.026289473684,
+    "median_overall_ms": 3564.04,
+    "cache_hit_rate": 0.0,
+    "avg_rewrite_time_hot_ms": null,
+    "avg_rewrite_time_cold_ms": 4707.973684210527,
+    "rewrite_time_improvement_ratio": null
+  },
+  "learned_cache_on_hot": {
+    "source_log": "my_rewriter\\logs_learned_hot\\dsb.log",
+    "improved": 0,
+    "total": 38,
+    "improved_pct": 0.0,
+    "avg_total_time_ms": 1183.5263157894738,
+    "avg_overall_ms": 1183.592342105263,
+    "median_overall_ms": 257.078,
+    "cache_hit_rate": 0.8421052631578947,
+    "avg_rewrite_time_hot_ms": 313.53125,
+    "avg_rewrite_time_cold_ms": 5823.5,
+    "rewrite_time_improvement_ratio": 0.9461610285910534
+  },
+  "delta": {
+    "e2e_avg_overall_ms_reduction": 0.748601161223002,
+    "e2e_note": "1 - (hot avg_overall / cold avg_overall); same 38 DSB queries"
+  }
+}
