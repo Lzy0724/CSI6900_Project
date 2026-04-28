@@ -22,8 +22,8 @@ def can_be_optimized_by_non_deterministic_function(sql_query, table_schema=None,
 
     # Helper function to check if the node is a non-deterministic function
     def is_non_deterministic_function(node):
-        # 旧代码：if isinstance(node, NONDETERMINISTIC): return True
-        # 新代码：直接删除上面那两行，只保留下面的逻辑
+        # Old code: if isinstance(node, NONDETERMINISTIC): return True
+        # New code: remove those two lines and keep only the logic below
 
         if isinstance(node, exp.Anonymous) and node.name.upper() in NON_DETERMINISTIC_FUNCS:
             return True

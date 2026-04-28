@@ -69,7 +69,7 @@ def analyze(query: str, name: str) -> dict:
     llm_start = None
     llm_end = None
     rewrite_res = []
-    with open(log_filename, 'r') as f:
+    with open(log_filename, 'r', encoding='utf-8', errors='replace') as f:
         lines = list(f.readlines())
         llm_start = lines[0].split(',')[0]
         llm_start = datetime.strptime(llm_start, '%H:%M:%S')
@@ -139,13 +139,13 @@ if DATASET == 'calcite':
 else:
     queries_path = os.path.join('..', DATASET)
 
-    # [新增] 自动检测 queries 子文件夹（适配你的目录结构）
+    # [Added] Auto-detect queries subfolder(fits your directory layout)
     if os.path.isdir(os.path.join(queries_path, 'queries')):
         queries_path = os.path.join(queries_path, 'queries')
 
     query_templates = os.listdir(queries_path)
     for template in tqdm(query_templates):
-        # [新增] 跳过 create_tables.sql 等非文件夹文件
+        # [Added] Skip non-folder entries such as create_tables.sql
         if not os.path.isdir(os.path.join(queries_path, template)):
             continue
 
@@ -153,7 +153,7 @@ else:
         for idx in range(max_idx):
             query_filename = f'{queries_path}/{template}/{template}_{idx}.sql'
 
-            # [新增] 增加文件存在性检查，防止报错
+            # [Added] Add file existence check to avoid runtime errors
             if not os.path.exists(query_filename):
                 print(f"Warning: File not found {query_filename}, skipping...")
                 continue

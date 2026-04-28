@@ -8,15 +8,15 @@ from jpype.types import *
 # zip -d LearnedRewrite.jar META-INF/DUMMY.DSA
 ''' Configure JAVA environment for JPype '''
 classpath = []
-# 获取当前脚本(rewrite.py)所在的目录
+# Get directory containing rewrite.py
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# 获取项目根目录（假设 my_rewriter 在根目录下，所以往上走一级）
+# Get project root directory(assuming my_rewriter is one level under project root)
 project_root = os.path.dirname(current_dir)
 
-# 拼接出绝对路径
+# Build absolute path
 local_lib_dir = os.path.join(project_root, 'CalciteRewrite', 'out', 'artifacts', 'LearnedRewrite_jar')
 
-# 下面这行保持不变
+# Keep the line below unchanged
 classpath.extend([os.path.join(local_lib_dir, jar) for jar in os.listdir(local_lib_dir)])
 
 if not jp.isJVMStarted():

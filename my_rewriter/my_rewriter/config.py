@@ -5,19 +5,19 @@ from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-# 获取当前脚本 (config.py) 所在的目录，即 my_rewriter 目录
+# Get directory of config.py (my_rewriter)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# 获取项目根目录 (my_rewriter 的上一级)
+# Get project root directory (my_rewriter parent directory)
 project_root = os.path.dirname(current_dir)
 
-# 使用绝对路径定义 CACHE_PATH (假设 cache 在项目根目录)
+# Define CACHE_PATH using an absolute path (assuming cache is in project root)
 CACHE_PATH = os.path.join(project_root, 'cache')
 
-# 使用绝对路径定义 CASE_RULES_PATH
-# 假设这个 jsonl 文件在 my_rewriter 目录下：
+# Define CASE_RULES_PATH using an absolute path
+# Assume this jsonl file is in my_rewriter:
 CASE_RULES_PATH = os.path.join(current_dir, 'stackoverflow-rewrite-rules-query-optimization.jsonl')
 
-# 【注意】：如果你的 jsonl 文件实际上是在项目根目录（LLM4Rewrite 下），请改用下面这行：
+# NOTE: If your jsonl file is actually in the project root (under LLM4Rewrite), please use the line below:
 # CASE_RULES_PATH = os.path.join(project_root, 'stackoverflow-rewrite-rules-query-optimization.jsonl')
 
 

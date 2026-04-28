@@ -118,20 +118,20 @@ if DATASET == 'calcite':
 else:
     queries_path = os.path.join('..', DATASET)
 
-    # [新增] 自动检测 queries 子文件夹（适配你的目录结构）
+    # [Added] Auto-detect queries subfolder(fits your directory layout)
     if os.path.isdir(os.path.join(queries_path, 'queries')):
         queries_path = os.path.join(queries_path, 'queries')
 
     query_templates = os.listdir(queries_path)
     for template in tqdm(query_templates):
-        # [新增] 跳过 create_tables.sql 等非文件夹文件
+        # [Added] Skip non-folder entries such as create_tables.sql
         if not os.path.isdir(os.path.join(queries_path, template)):
             continue
 
         max_idx = 1 if args.large else 2
         for idx in range(max_idx):
             query_filename = f'{queries_path}/{template}/{template}_{idx}.sql'
-            # ... (后续代码保持不变)
+            # ... (rest of the code remains unchanged)
             content = open(query_filename, 'r').read()
             content = re.sub(r'--.*\n', '', content)
             queries = [q.strip() + ';' for q in content.split(';') if q.strip()]

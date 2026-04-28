@@ -4,7 +4,6 @@ import argparse
 import re
 import json
 import jsonlines
-import jpype
 import time
 
 from llama_index.core import Settings
@@ -14,28 +13,37 @@ _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
-from my_rewriter.config import init_db_config
+from my_rewriter.config import init_llms, init_db_config
 from my_rewriter.database import DBArgs, Database
+from my_rewriter.rag_retrieve import init_docstore, rag_retrieve, rag_semantics_retrieve, rag_structure_retrieve
+from my_rewriter.rag_rewrite import rag_rewrite
+from my_rewriter.db_utils import execute_rewrite
+from my_rewriter.my_rewriter.learned_cache import LearnedRewriteCache, extract_sql_features, feature_fingerprint
+import jpype
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--database', type=str, required=True)
-parser.add_argument('--logdir', type=str, default='logs_learned_rewrite')
+parser.add_argument('--logdir', type=str, default='logs_ultimate_rewrite')
 parser.add_argument('--large', action='store_true', required=False, help='whether to execute SQL queries on large database')
 parser.add_argument('--cache_db', type=str, default=None, help='sqlite path for learned rewrite cache')
 parser.add_argument('--disable_cache', action='store_true', required=False, help='disable learned rewrite cache')
 parser.add_argument('--ignore_history', action='store_true', required=False, help='rerun even if name already exists in res.jsonl')
+parser.add_argument('--index', type=str, default='hybrid', choices=['hybrid', 'semantics', 'structure'])
+parser.add_argument('--topk', type=int, default=10, help='retriever top k')
+parser.add_argument('--evidence_topk', type=int, default=None, help='limit evidence items included in RAG prompt')
+parser.add_argument('--rule_prune_mode', type=str, default='off', choices=['off', 'heuristic'])
+parser.add_argument('--max_rule_candidates', type=int, default=None, help='cap candidate rule count in RAG prompt')
 args = parser.parse_args()
 
 pg_config = init_db_config(args.database)
 pg_args = DBArgs(pg_config)
+model_args = init_llms(args.logdir)
 
-from my_rewriter.database import DBArgs, Database
-from my_rewriter.rewrite import learned_rewrite
-from my_rewriter.db_utils import execute_rewrite
-from my_rewriter.my_rewriter.learned_cache import LearnedRewriteCache, extract_sql_features, feature_fingerprint
-
-BUDGET = 20
+CASE_BATCH = 5
+RULE_BATCH = 10
+REWRITE_ROUNDS = 1
 DATABASE = args.database
+RETRIEVER_TOP_K = args.topk
 LOG_FILENAME = os.path.join(args.logdir, DATABASE, 'res.jsonl')
 CACHE_DB_PATH = args.cache_db or os.path.join(args.logdir, DATABASE, 'learned_rewrite_cache.sqlite')
 
@@ -63,10 +71,11 @@ else:
 
 schema_path = os.path.join('..', DATASET, 'create_tables.sql')
 schema = open(schema_path, 'r').read()
+docstore = init_docstore()
+
 
 def my_rewrite(query: str, schema: str, name: str) -> dict:
     out_dict = {'name': name}
-    create_tables = [x for x in schema.split(';') if x.strip() != '']
     start = time.time()
     features = extract_sql_features(query)
     cache_key = feature_fingerprint(features)
@@ -90,19 +99,49 @@ def my_rewrite(query: str, schema: str, name: str) -> dict:
             return out_dict
 
     try:
-        res = learned_rewrite(query, create_tables, BUDGET, host=pg_config.get('host', 'localhost'), port=str(pg_config.get('port', 5432)), user=pg_config.get('user', 'postgres'), password=pg_config.get('password', 'postgres'), dbname=pg_config.get('dbname', 'postgres'))
+        db = Database(pg_args)
+        input_cost = db.cost_estimation(query)
+        if args.index == 'hybrid':
+            res = rag_retrieve(
+                query, schema, docstore, embed_dim=model_args['EMBED_DIM'], RETRIEVER_TOP_K=RETRIEVER_TOP_K
+            )
+        elif args.index == 'semantics':
+            res = rag_semantics_retrieve(query, schema, docstore, RETRIEVER_TOP_K=RETRIEVER_TOP_K)
+        elif args.index == 'structure':
+            res = rag_structure_retrieve(
+                query, schema, docstore, embed_dim=model_args['EMBED_DIM'], RETRIEVER_TOP_K=RETRIEVER_TOP_K
+            )
+        else:
+            raise ValueError(f'Invalid index: {args.index}')
 
-        out_dict['input_sql'] = str(res.get("input_sql"))
-        out_dict['input_cost'] = float(str(res.get("input_cost")))
-        out_dict['output_sql'] = str(res.get("output_sql"))
-        out_dict['output_cost'] = float(str(res.get("output_cost")))
-        out_dict['used_rules'] = [str(r) for r in res.get("used_rules")]
-        out_dict['rewrite_time'] = int(res.get("time"))
+        rr = rag_rewrite(
+            res['retriever_res'],
+            res['rewrites'],
+            query,
+            schema,
+            pg_args,
+            model_args,
+            CASE_BATCH=CASE_BATCH,
+            RULE_BATCH=RULE_BATCH,
+            REWRITE_ROUNDS=REWRITE_ROUNDS,
+            EVIDENCE_TOP_K=args.evidence_topk,
+            RULE_PRUNE_MODE=args.rule_prune_mode,
+            MAX_RULE_CANDIDATES=args.max_rule_candidates,
+        )
+        last = rr['last_rewrite']
+        rule_seq = rr['rearranged_rule_seq']
+
+        out_dict['input_sql'] = query
+        out_dict['input_cost'] = float(input_cost)
+        out_dict['output_sql'] = str(last['output_sql'])
+        out_dict['output_cost'] = float(last['output_cost'])
+        out_dict['used_rules'] = [str(r) for r in last['used_rules']]
+        out_dict['rewrite_time'] = int((time.time() - start) * 1000)
         out_dict['cache_hit'] = False
         out_dict['llm_invoked'] = True
-        if cache is not None:
-            cache.put(features, out_dict['used_rules'])
-    except jpype.JException as e:
+        if cache is not None and rule_seq:
+            cache.put(features, rule_seq)
+    except jpype.JException:
         out_dict['input_sql'] = query
         db = Database(pg_args)
         out_dict['input_cost'] = db.cost_estimation(query)
@@ -113,6 +152,7 @@ def my_rewrite(query: str, schema: str, name: str) -> dict:
         out_dict['cache_hit'] = False
         out_dict['llm_invoked'] = True
     return out_dict
+
 
 if DATASET == 'calcite':
     queries_path = os.path.join('..', DATASET, f'{DATASET}.jsonl')
@@ -139,6 +179,8 @@ else:
         max_idx = 1 if args.large else 2
         for idx in range(max_idx):
             query_filename = f'{queries_path}/{template}/{template}_{idx}.sql'
+            if not os.path.exists(query_filename):
+                continue
             content = open(query_filename, 'r').read()
             content = re.sub(r'--.*\n', '', content)
             queries = [q.strip() + ';' for q in content.split(';') if q.strip()]

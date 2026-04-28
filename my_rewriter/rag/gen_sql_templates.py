@@ -5,12 +5,12 @@ import typing as t
 from collections import defaultdict, deque
 from sqlglot.optimizer.qualify import qualify
 
-# --- 兼容性补丁：处理 sqlglot 版本差异 ---
+# --- Compatibility patch: handle sqlglot version differences ---
 try:
     from sqlglot.optimizer.simplify import NONDETERMINISTIC
 except ImportError:
-    # 如果无法导入 NONDETERMINISTIC，则手动定义一组常见的非确定性表达式
-    # 这样可以兼容不同版本的 sqlglot
+    # If NONDETERMINISTIC cannot be imported, define common nondeterministic expressions manually
+    # This keeps compatibility across sqlglot versions
     possible_nondeterministic = [
         'Rand', 'Random', 'CurrentTimestamp', 'CurrentDate', 'CurrentTime', 'Uuid', 'Guid'
     ]
@@ -57,7 +57,7 @@ def transform(node: exp.Expression, fun: t.Callable, *args: t.Any, copy: bool = 
     root = node.copy() if copy else node
 
     for current_node in reversed(list(root.dfs())):
-        # --- 修复开始：跳过非 Expression 类型的节点（如 tuple） ---
+        # --- Fix: skip non-Expression nodes (e.g., tuple) ---
         if not isinstance(current_node, exp.Expression):
             continue
         # ----------------------------------------------------

@@ -30,11 +30,11 @@ BUDGET = 20
 DATABASE = args.database
 LOG_FILENAME = os.path.join(args.logdir, DATABASE, 'res.jsonl')
 
-# [新增] 自动创建日志目录
+# [Added] Auto-create log directory
 os.makedirs(os.path.dirname(LOG_FILENAME), exist_ok=True)
 
 history = set()
-# [新增] 先检查文件是否存在，再读取（防止第一次运行报错）
+# [Added] Check file existence before reading (avoid first-run errors)
 if os.path.exists(LOG_FILENAME):
     with open(LOG_FILENAME, 'r') as fin:
         for line in fin.readlines():
@@ -93,13 +93,13 @@ if DATASET == 'calcite':
 else:
     queries_path = os.path.join('..', DATASET)
 
-    # [新增] 自动检测 queries 子文件夹
+    # [Added] Auto-detect queries subfolder
     if os.path.isdir(os.path.join(queries_path, 'queries')):
         queries_path = os.path.join(queries_path, 'queries')
 
     query_templates = os.listdir(queries_path)
     for template in query_templates:
-        # [新增] 跳过非文件夹
+        # [Added] Skip non-folder entries
         if not os.path.isdir(os.path.join(queries_path, template)):
             continue
 

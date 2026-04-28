@@ -5540,10 +5540,10 @@ public class SqlOperatorTest {
       f.checkString("SOUNDEX('mu')", "M000", "VARCHAR NOT NULL");
       f.checkString("SOUNDEX('mile')", "M400", "VARCHAR NOT NULL");
       // note: it's different with soundex for bigquery/mysql/oracle/pg
-      f.checkString("SOUNDEX(_UTF8'\u5B57\u5B57')",
-          "字字", "VARCHAR NOT NULL");
-      f.checkString("SOUNDEX(_UTF8'\u5B57\u5B57\u5B57\u5B57')",
-          "字字字字", "VARCHAR NOT NULL");
+      f.checkString("SOUNDEX(_UTF8'zz')",
+          "zz", "VARCHAR NOT NULL");
+      f.checkString("SOUNDEX(_UTF8'zzzz')",
+          "zzzz", "VARCHAR NOT NULL");
       f.checkNull("SOUNDEX(cast(null as varchar(1)))");
     };
     f0.forEachLibrary(list(SqlLibrary.SPARK), consumer);

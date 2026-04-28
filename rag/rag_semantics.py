@@ -40,7 +40,7 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 def read_summaries_with_embedding(filename: str) -> Tuple[Dict[str, List[float]], Sequence[IndexNode]]:
     summary_to_embed_map = {}
     index_nodes = []
-    with open(filename, 'r') as fin:
+    with open(filename, 'r', encoding='utf-8') as fin:
         for line in tqdm(fin.readlines()):
             obj = json.loads(line)
             myid = f'{obj["id"]}-{obj["answer_id"]}'
@@ -74,7 +74,7 @@ class MyVectorStoreIndex(VectorStoreIndex):
         results = []
         for node in nodes:
             embedding = summary_to_embed_map[node.text]
-            result = node.copy()
+            result = node.model_copy()
             result.embedding = embedding
             results.append(result)
         return results

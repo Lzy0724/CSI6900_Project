@@ -41,7 +41,7 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
 def read_sql_template_with_embedding(filename: str) -> Dict[str, List[float]]:
     sql_template_to_embed_map = {}
-    with open(filename, 'r') as fin:
+    with open(filename, 'r', encoding='utf-8') as fin:
         for line in tqdm(fin.readlines()):
             obj = json.loads(line)
             sql_template = obj['sql_template']
@@ -60,7 +60,7 @@ def get_one_hot(tot_rules: List[str], cur_rules: List[str]) -> List[int]:
 
 def read_sql_with_embedding(filename: str) -> Dict[str, List[float]]:
     sql_to_embed_map = {}
-    with open(filename, 'r') as fin:
+    with open(filename, 'r', encoding='utf-8') as fin:
         for line in fin.readlines():
             obj = json.loads(line)
             one_hot = []
@@ -77,7 +77,7 @@ assert '' not in sql_to_embed_map
 
 def read_sql_with_sql_template(filename: str) -> Dict[str, List[str]]:
     sql_to_sql_template_map = defaultdict(list)
-    with open(filename, 'r') as fin:
+    with open(filename, 'r', encoding='utf-8') as fin:
         for line in fin.readlines():
             obj = json.loads(line)
             myid = f'{obj["id"]}-{obj["answer_id"]}'
@@ -93,7 +93,7 @@ def read_content_with_embedding(filename: str) -> Tuple[Dict[str, List[float]], 
     index_nodes = []
     qa_cnt = 0
     sql_cnt = 0
-    with open(filename, 'r') as fin:
+    with open(filename, 'r', encoding='utf-8') as fin:
         for line in tqdm(fin.readlines()):
             qa_cnt += 1
             obj = json.loads(line)
@@ -146,7 +146,7 @@ class MyVectorStoreIndex(VectorStoreIndex):
         results = []
         for node in nodes:
             embedding = content_to_embed_map[node.text]
-            result = node.copy()
+            result = node.model_copy()
             result.embedding = embedding
             results.append(result)
         return results

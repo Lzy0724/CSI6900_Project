@@ -37,7 +37,7 @@ def init_docstore() -> SimpleDocumentStore:
     def read_docs(filename: str) -> Sequence[BaseNode]:
         doc_nodes = []
         if not os.path.exists(filename):
-            print(f"警告: 找不到文档文件: {filename}")
+            print(f"Warning: document file not found: {filename}")
             return []
 
         with open(filename, 'r', encoding='utf-8') as fin:

@@ -13,14 +13,14 @@ from my_rewriter.rewrite import get_normal_rules
 from my_rewriter.rewrite import match_all_rules, match_normal_rules
 
 calcite_rules: t.Dict[str, str] = {}
-# 获取当前脚本 (rag 目录) 的绝对路径
+# Get absolute path of current script (rag directory)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-# 获取项目根目录 (rag 的上一级)
+# Get project root directory (parent of rag)
 project_root = os.path.dirname(current_dir)
-# 构建目标文件的绝对路径
+# Build absolute path to target file
 rule_file_path = os.path.join(project_root, 'explain_rule', 'calcite_rewrite_rules_structured.jsonl')
 
-# 使用构建好的路径打开文件，并指定 utf-8 编码以防乱码
+# Open file using resolved path with utf-8 encodingto avoid encoding issues
 with open(rule_file_path, 'r', encoding='utf-8') as fin:
     for line in fin.readlines():
         rule = json.loads(line)
@@ -30,10 +30,10 @@ with open(rule_file_path, 'r', encoding='utf-8') as fin:
         calcite_rules[rule_name] = sub_rules_str
 
 rule_descriptions = {}
-# 构建目标文件的绝对路径
+# Build absolute path to target file
 kb_file_path = os.path.join(project_root, 'knowledge-base', 'rule_cluster_summaries_structured.jsonl')
 
-# 使用构建好的路径打开文件，并指定 utf-8 编码
+# Open file using resolved path with utf-8 encoding
 with open(kb_file_path, 'r', encoding='utf-8') as fin:
     for line in fin:
         rule = json.loads(line)
@@ -41,8 +41,8 @@ with open(kb_file_path, 'r', encoding='utf-8') as fin:
         transformations = rule['transformations']
         rule_descriptions[rule['index']] = f'**Conditions**: {conditions}\n**Transformations**: {transformations}'
 
-# 原来的代码可能类似：rules_path = '../knowledge-base/rule_cluster_funcs'
-# 修改为：
+# Previous code may have looked like:rules_path = '../knowledge-base/rule_cluster_funcs'
+# Change to:
 rules_path = os.path.join(project_root, 'knowledge-base', 'rule_cluster_funcs')
 for file in os.listdir(rules_path):
     filename = os.sep.join([rules_path, file])
@@ -145,13 +145,13 @@ async def gen_rewrites_from_calcite_rules(sql: str, calcite_rules: t.List[t.Dict
     t.Dict[str, str]]:
     rewrites = []
 
-    # --- 修复开始：添加信号量限制并发数 ---
-    # 限制同时只有 3 个请求发送给 OpenAI，避免 429 错误
+    # --- Fix: add semaphore to limit concurrency ---
+    # Limit concurrent OpenAI requests to 3 to avoid HTTP 429 errors
     sem = asyncio.Semaphore(3)
 
     async def sem_task(rule_obj):
         async with sem:
-            # 可以在这里加个随机等待，进一步平滑请求
+            # Optionally add random delay here to smooth request bursts
             # await asyncio.sleep(0.1)
             return await gen_rewrite_from_calcite_sub_rule(rule_obj, sql, fun)
 

@@ -11,9 +11,9 @@ import argparse
 import re
 from collections import defaultdict
 
-# 1. 获取项目根目录 (放在最前面，方便后续使用)
+# 1. Get project root directory (placed first for later reuse)
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(project_root)  # 确保能导入项目模块
+sys.path.append(project_root)  # Ensure project modules can be imported
 
 from my_rewriter.database import DBArgs, Database
 from my_rewriter.config import init_db_config, init_llms
@@ -42,7 +42,7 @@ elif 'dsb' in args.database:
 else:
     DATASET = args.database
 
-# 2. 修复 LOG_DIR 为绝对路径
+# 2. Make LOG_DIR an absolute path
 LOG_DIR = os.path.join(project_root, args.logdir, DATASET)
 
 
@@ -63,13 +63,13 @@ def is_improved(t: t.Dict, idx: int, compute_latency: bool) -> bool:
 
 
 def _analyze(name: str, input_latency: float) -> dict:
-    # 3. 使用 os.path.join 拼接日志路径
+    # 3. Build log path using os.path.join
     log_filename = os.path.join(LOG_DIR, f'{name}.log')
 
-    # 4. 增加文件存在性检查
+    # 4. Add file existence check
     if not os.path.exists(log_filename):
-        print(f"警告: 找不到日志文件 {log_filename}。请确保你已经运行了重写脚本。")
-        # 返回一个空结果以避免崩溃，或者你可以选择在这里 raise Exception
+        print(f"Warning: log file not found {log_filename}。Please ensure the rewrite script has been run.")
+        # Return an empty result to avoid crashing (or raise an exception here)
         return {'template': name, 'time': {'retrieval': 0, 'arrange': 0, 'rewrite': 0}, 'rewrites': []}
 
     retrieval_start = None
@@ -81,8 +81,8 @@ def _analyze(name: str, input_latency: float) -> dict:
     rewrite_res = []
     model = MyModel(model_args)
 
-    # 5. 指定编码 utf-8
-    with open(log_filename, 'r', encoding='utf-8') as f:
+    # 5. Use utf-8 encoding
+    with open(log_filename, 'r', encoding='utf-8', errors='replace') as f:
         lines = list(f.readlines())
         if not lines:
             return {'template': name, 'time': {'retrieval': 0, 'arrange': 0, 'rewrite': 0}, 'rewrites': []}
@@ -211,7 +211,7 @@ schema_path = os.path.join(project_root, args.database, 'create_tables.sql')
 analyze_log_filename = f'{args.logdir}/{args.database}.log' if not args.no_reflection else f'{args.logdir}/{args.database}_no_reflection.log'
 analyze_log_filename = os.path.join(project_root, analyze_log_filename)
 
-# 确保日志目录存在
+# Ensure log directory exists
 os.makedirs(os.path.dirname(analyze_log_filename), exist_ok=True)
 
 logging.basicConfig(filename=analyze_log_filename,
@@ -222,7 +222,7 @@ logging.basicConfig(filename=analyze_log_filename,
 
 template_rewrites = []
 if DATASET == 'calcite':
-    queries_path = os.path.join(project_root, DATASET, f'{DATASET}.jsonl')  # 修正路径
+    queries_path = os.path.join(project_root, DATASET, f'{DATASET}.jsonl')  # Path fix
     with open(queries_path, 'r', encoding='utf-8') as fin:
         for line in tqdm(fin.readlines()):
             obj = json.loads(line)
@@ -230,16 +230,21 @@ if DATASET == 'calcite':
             name = sorted([x['name'] for x in obj['rewrites']])[0]
 
             rewrite_obj = analyze(query, name)
-            if rewrite_obj['best_index'] != -1:  # 只添加有效结果
+            if rewrite_obj['best_index'] != -1:  # Add only valid results
                 template_rewrites.append(rewrite_obj)
 else:
-    # 指向 dsb 下的 queries 文件夹
+    # DSB: <dataset>/queries/queryXXX/; TPC-H in this repo: <dataset>/queryN/ (no "queries" folder)
     queries_path = os.path.join(project_root, args.database, 'queries')
     if not os.path.exists(queries_path):
-        print(f"错误: 查询目录不存在 {queries_path}")
+        queries_path = os.path.join(project_root, args.database)
+    if not os.path.exists(queries_path):
+        print(f"Error: query path does not exist {queries_path}")
         exit(1)
 
-    query_templates = os.listdir(queries_path)
+    query_templates = sorted(
+        d for d in os.listdir(queries_path)
+        if os.path.isdir(os.path.join(queries_path, d))
+    )
     for template in tqdm(query_templates):
         max_idx = 1 if args.large else 2
         for idx in range(max_idx):
@@ -258,7 +263,7 @@ else:
                     template_rewrites.append(rewrite_obj)
 
 if not template_rewrites:
-    print("没有找到任何有效的重写结果日志。请先运行重写脚本。")
+    print("No valid rewrite result logs found. Please run the rewrite script first.")
     exit(0)
 
 input_attr = 'input_latency' if args.compute_latency else 'input_cost'
